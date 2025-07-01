@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import getPastOrders from "../api/pastOrders";
 import getPastOrder from "../api/getPastOrder";
 import Modal from "../Modal";
+import ErrorBoundary from "../ErrorBoundary";
 
 const formatCurrency = new Intl.NumberFormat("sv-SE", {
   style: "currency",
@@ -11,8 +12,16 @@ const formatCurrency = new Intl.NumberFormat("sv-SE", {
 }).format;
 
 export const Route = createLazyFileRoute("/past")({
-  component: PastOrdersRoute,
+  component: ErrorBoundaryWrapperPastOrderRoutes,
 });
+
+function ErrorBoundaryWrapperPastOrderRoutes() {
+  return (
+    <ErrorBoundary>
+      <PastOrdersRoute />
+    </ErrorBoundary>
+  );
+}
 
 function PastOrdersRoute() {
   const [page, setPage] = useState(1);
