@@ -3,7 +3,7 @@ const Pizza = ({ name, description, image }) => {
     <div className="pizza">
       <h2>{name}</h2>
       <p>{description}</p>
-      <img src={image} alt={name} />
+      <img src={image ? image : "https://picsum.photos/200"} alt={name} />
     </div>
   );
 };
