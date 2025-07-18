@@ -7,22 +7,37 @@ export const Route = createLazyFileRoute("/contact")({
 });
 
 function ContactRoute() {
+  const validateForm = (formData) => {
+    const email = formData.get("email");
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return false;
+    }
+    return true;
+  };
+
   const mutation = useMutation({
     mutationFn: function (event) {
       event.preventDefault();
       const formData = new FormData(event.target);
-      return postContact(
-        formData.get("name"),
-        formData.get("email"),
-        formData.get("message"),
-      );
+      const formValidates = validateForm(formData);
+      if (formValidates) {
+        return postContact(
+          formData.get("name"),
+          formData.get("email"),
+          formData.get("message"),
+        );
+      } else {
+        throw new Error("Form validation failed.");
+      }
     },
   });
 
   return (
     <div className="contact">
       <h2>Contact</h2>
-      {mutation.isSuccess ? (
+      {mutation.isError ? (
+        <p className="error-message">{mutation.error.message}</p>
+      ) : mutation.isSuccess ? (
         <h3>Submitted!</h3>
       ) : (
         <form onSubmit={mutation.mutate}>
